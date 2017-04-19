@@ -1,0 +1,6 @@
+[report]
+include =
+    src/zbw/*
+omit =
+    */test*
+    */upgrades/*
