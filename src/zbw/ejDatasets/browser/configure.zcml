@@ -12,5 +12,20 @@
         attribute="get_dataset"
         permission="cmf.ManagePortal"
         />
+    <browser:page
+        name="resources"
+        for="Products.eJournal.interfaces.marker.IPaper"
+        class=".dataset.Ckan"
+        attribute="resources"
+        permission="zope2.Public"
+        />
+
+    <browser:page
+        name="dataverse"
+        for="Products.eJournal.interfaces.marker.IPaper"
+        class=".dataset.Dataverse"
+        attribute="get_files"
+        permission="zope2.Public"
+        />
 
 </configure>
