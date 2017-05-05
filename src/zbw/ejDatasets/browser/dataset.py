@@ -4,7 +4,7 @@ import random
 import requests
 from hurry.filesize import size
 import logging
-
+# from toolz.dicttoolz import get_in
 
 
 # for testing only! edawax demo server, fixed ids
@@ -17,7 +17,6 @@ pkg = demo.action.package_show(id=id)
 resources = pkg['resources']
 
 
-
 class Ckan(BrowserView):
     """
     not in use, yet
@@ -28,7 +27,8 @@ class Ckan(BrowserView):
         first test
         """
         evil_html = u"<html><head><title>Test</title></head><body>"
-        evil_html += u"<h2><a href='{}'>{}</a></h2>".format(url+"/dataset/"+id, pkg['title'])
+        evil_html += u"<h2><a href='{}'>{}</a></h2>".format(url + "/dataset/" +
+                id, pkg['title'])
         evil_html += u"<h3>Resources</h3>"
         for res in resources:
             evil_html += u"<p><a href='{}'><br />{}</p>{}".format(res['url'],
@@ -40,22 +40,16 @@ class Ckan(BrowserView):
     def resources(self):
         return resources
         
-        
-
-# dataverse Token (bunke):
-# 22a77c03-b4c5-41fe-9cca-995c9a5c601a
-# test doi: doi:10.7910/DVN/P9VSZA
-
 
 class Dataverse(BrowserView):
 
     base_url = "https://dataverse.harvard.edu"
     token = '22a77c03-b4c5-41fe-9cca-995c9a5c601a'
     logger = logging.getLogger('Dataverse')
-    
+
     def get_files(self):
         """ this should call an adapter """
-        
+
         def fdict(rfile):
             df = rfile['dataFile']
             keys = ['contentType', 'filename', 'filesize', 'id',
@@ -76,13 +70,14 @@ class Dataverse(BrowserView):
         url = '{}/api/datasets/:persistentId/'.format(self.base_url)
         
         try:
-            req = requests.get(url, params={'persistentId': doi}, timeout=1)
+            # TODO: timeout should be max. 1 for production!
+            req = requests.get(url, params={'persistentId': doi}, timeout=5)
         except requests.exceptions.RequestException as e:
             self.logger.error(e)
-            return []
+            return
         except requests.exceptions.Timeout as e:
             self.logger.error(e)
-            return []
+            return
         
         if req.status_code == 200:
             resp_data = req.json()
@@ -92,7 +87,8 @@ class Dataverse(BrowserView):
             msg = req.json()['message']
             e = u"[{}]: {}".format(req.status_code, msg)
             self.logger.error(e)
-            return []
+            return
+        
 
 
 
