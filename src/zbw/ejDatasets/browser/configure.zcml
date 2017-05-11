@@ -4,28 +4,21 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="zbw.ejDatasets">
 
-<!-- ckan test -->
+
     <browser:page
-        name="dataset"
+        name="dataverse_files"
         for="Products.eJournal.interfaces.marker.IPaper"
-        class=".dataset.Ckan"
-        attribute="get_dataset"
-        permission="cmf.ManagePortal"
+        class=".dataset.View"
+        attribute="dataverse_files"
+        permission="zope2.Public"
         />
     <browser:page
-        name="resources"
+        name="dataset_url"
         for="Products.eJournal.interfaces.marker.IPaper"
-        class=".dataset.Ckan"
-        attribute="resources"
+        class=".dataset.View"
+        attribute="dataset_url"
         permission="zope2.Public"
         />
 
-    <browser:page
-        name="dataverse"
-        for="Products.eJournal.interfaces.marker.IPaper"
-        class=".dataset.Dataverse"
-        attribute="get_files"
-        permission="zope2.Public"
-        />
 
 </configure>
