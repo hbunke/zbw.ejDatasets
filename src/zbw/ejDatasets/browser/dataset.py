@@ -8,6 +8,7 @@ from Products.ATContentTypes.utils import DT2dt
 import datetime
 # from collections import namedtuple
 from toolz.dicttoolz import keyfilter
+from toolz.itertoolz import concat, remove
 
 
 def dataset_pid(paper):
@@ -30,6 +31,19 @@ def dataset_pid(paper):
         return format_hdl(pid)
     return format_doi(pid)
 
+
+def resort(files):
+    """
+    make Readme and PDF files appear first in file list
+    """
+
+    def checkfile(f):
+        kw = ['.pdf', '.txt', '.docx', 'README', 'readme', 'Readme', 'ReadMe']
+        return any(map(lambda k: k in f['filename'], kw))
+    filtered = filter(checkfile, files)
+    c_files = remove(lambda x: x in filtered, files)
+    return tuple(concat([filtered, c_files]))
+        
 
 class View(BrowserView):
     """
@@ -73,7 +87,7 @@ class View(BrowserView):
         if req.status_code == 200:
             resp_data = req.json()
             files = resp_data['data']['latestVersion']['files']
-            return map(fdict, files)
+            return resort(map(fdict, files))
         else:
             msg = req.json()['message']
             e = u"[{}]: {}".format(req.status_code, msg)
@@ -87,6 +101,9 @@ class View(BrowserView):
         pid_type, pid = dataset_pid(self.context).split(':')
         return {'doi': "http://dx.doi.org/{}".format(pid),
                 'hdl': "http://hdl.handle.net/{}".format(pid)}[pid_type]
+
+
+
 
 
 # class Ckan(BrowserView):
