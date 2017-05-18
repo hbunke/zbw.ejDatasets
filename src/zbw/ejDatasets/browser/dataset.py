@@ -37,13 +37,14 @@ def resort(files):
     make Readme and PDF files appear first in file list
     """
 
-    def checkfile(f):
+    def is_text(f):
         kw = ['.pdf', '.txt', '.docx', 'README', 'readme', 'Readme', 'ReadMe']
         return any(map(lambda k: k in f['filename'], kw))
-    filtered = filter(checkfile, files)
-    c_files = remove(lambda x: x in filtered, files)
-    return tuple(concat([filtered, c_files]))
-        
+    
+    text = filter(is_text, files)
+    data = remove(lambda x: x in text, files)
+    return tuple(concat([text, data]))
+    
 
 class View(BrowserView):
     """
@@ -85,8 +86,7 @@ class View(BrowserView):
             return
         
         if req.status_code == 200:
-            resp_data = req.json()
-            files = resp_data['data']['latestVersion']['files']
+            files = req.json()['data']['latestVersion']['files']
             return resort(map(fdict, files))
         else:
             msg = req.json()['message']
