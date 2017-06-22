@@ -7,7 +7,7 @@ import logging
 from Products.ATContentTypes.utils import DT2dt
 import datetime
 # from collections import namedtuple
-from toolz.dicttoolz import keyfilter
+from toolz.dicttoolz import keyfilter, get_in
 from toolz.itertoolz import concat, remove
 
 
@@ -86,7 +86,8 @@ class View(BrowserView):
             return
         
         if req.status_code == 200:
-            files = req.json()['data']['latestVersion']['files']
+            # there might be deaccessioned datasets, so we need a default here
+            files = get_in(['data', 'latestVersion', 'files'], req.json(), [])
             return resort(map(fdict, files))
         else:
             msg = req.json()['message']
