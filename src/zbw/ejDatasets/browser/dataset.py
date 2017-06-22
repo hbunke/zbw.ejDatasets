@@ -17,9 +17,9 @@ def dataset_pid(paper):
     """
 
     def format_doi(doi):
-        if not doi.startswith('doi:'):
+        if not doi.lower().startswith('doi:'):
             doi = 'doi:{}'.format(doi)
-        return doi
+        return doi.replace('DOI:', 'doi:')
 
     def format_hdl(hdl):
         return "hdl:1902.1/{}".format(hdl)
